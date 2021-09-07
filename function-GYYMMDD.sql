@@ -1,0 +1,22 @@
+CREATE FUNCTION GYYMMDD (@YYYYMMDD [NVARCHAR](8))
+RETURNS [NVARCHAR](7)
+as
+BEGIN
+    DECLARE @ret [NVARCHAR](7);
+
+    select @ret = CASE 
+    -- Concat(G, YY, MMDD)
+    --  1868:明治
+    --  1912:大正
+    --  1926:昭和
+    --  1989:平成
+    --  2019:令和
+    --  There will be more and this will eventually be out of date.
+        WHEN @YYYYMMDD <= '19120729' THEN CONCAT(1, RIGHT(CONCAT(0, PARSE(LEFT(@YYYYMMDD, 4) AS Int) - 1867), 2), RIGHT(@YYYYMMDD, 4)) 
+        WHEN @YYYYMMDD <= '19261224' THEN CONCAT(2, RIGHT(CONCAT(0, PARSE(LEFT(@YYYYMMDD, 4) AS Int) - 1911), 2), RIGHT(@YYYYMMDD, 4)) 
+        WHEN @YYYYMMDD <= '19890107' THEN CONCAT(3, RIGHT(CONCAT(0, PARSE(LEFT(@YYYYMMDD, 4) AS Int) - 1925), 2), RIGHT(@YYYYMMDD, 4)) 
+        WHEN @YYYYMMDD <= '20190430' THEN CONCAT(4, RIGHT(CONCAT(0, PARSE(LEFT(@YYYYMMDD, 4) AS Int) - 1988), 2), RIGHT(@YYYYMMDD, 4)) 
+        ELSE                              CONCAT(5, RIGHT(CONCAT(0, PARSE(LEFT(@YYYYMMDD, 4) AS Int) - 2018), 2), RIGHT(@YYYYMMDD, 4)) 
+    END;
+    RETURN @ret
+END;
